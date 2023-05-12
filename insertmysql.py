@@ -7,7 +7,7 @@ class Mysql:
         self.mydb = mysql.connector.connect(
             host="150.158.140.253",  # 数据库主机地址
             user="root",  # 用户名
-            password="qq523629002***",  # 密码
+            password="",  # 密码
             database="DATA")  # 数据库名称
         # 创建游标对象
         self.my_cursor = self.mydb.cursor()
