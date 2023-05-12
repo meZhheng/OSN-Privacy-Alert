@@ -4,6 +4,7 @@ import time
 from typing import List, Dict
 import crawlertool as tool
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 
 
 class SpiderTwitterAccountInfo(tool.abc.SingleSpider):
@@ -13,9 +14,7 @@ class SpiderTwitterAccountInfo(tool.abc.SingleSpider):
 
   def __init__(self, driver):
     self.driver = driver
-
     # 爬虫实例的变量
-    self.user_name = None
 
   @staticmethod
   def get_twitter_user_name(page_url: str) -> str:
@@ -39,36 +38,27 @@ class SpiderTwitterAccountInfo(tool.abc.SingleSpider):
 
     self.driver.get(actual_url)
     time.sleep(3)
-
     item = {}
 
-    if label := self.driver.find_element_by_xpath(
-        "//*[@id=\"react-root\"]/div/div/div/main/div/div/div/div[1]/div/div/div/div/div[1]/div/div[5]/div[1]/a"):
-      item["following"] = tool.extract.number(label.text)
-    elif label := self.driver.find_element_by_xpath(
-        "//*[@id=\"react-root\"]/div/div/div/main/div/div/div/div[1]/div/div/div/div/div[1]/div/div[4]/div[1]/a"):
-      item["following"] = tool.extract.number(label.text)
-    else:
-      self.log("Twitter账号:" + user_name + "|账号正在关注数抓取异常")
-      item["following"] = 0
+    userID = self.driver.find_element(By.XPATH, "(//div[@data-testid='UserName']//div[@tabindex='-1']//span)").text
+    item["userID"] = userID.replace('@', '')
 
-    if label := self.driver.find_element_by_xpath(
-        "//*[@id=\"react-root\"]/div/div/div/main/div/div/div/div[1]/div/div/div/div/div[1]/div/div[5]/div[2]/a"):
-      item["followers"] = tool.extract.number(label.text)
-    elif label := self.driver.find_element_by_xpath(
-        "//*[@id=\"react-root\"]/div/div/div/main/div/div/div/div[1]/div/div/div/div/div[1]/div/div[4]/div[2]/a"):
-      item["followers"] = tool.extract.number(label.text)
-    else:
-      self.log("Twitter账号:" + user_name + "|账号粉丝数抓取异常")
-      item["followers"] = 0
+    item["userName"] = self.driver.find_element(By.XPATH, "(//div[@data-testid='UserName']//span)[1]").text
+
+    item["userDescription"] = self.driver.find_element(By.XPATH, "//div[@data-testid='UserDescription']").text
+
+    item["userLocation"] = self.driver.find_element(By.XPATH, "//span[@data-testid='UserLocation']").text
+
+    userUrl = self.driver.find_element(By.XPATH, "//a[@data-testid='UserUrl']")
+    item["userUrl"] = userUrl.get_attribute("href")
+
+    item["following"] = self.driver.find_element(By.XPATH, "(//a[@dir='ltr' and @role='link']/span/span)[1]").text
+    item["followers"] = self.driver.find_element(By.XPATH, "(//a[@dir='ltr' and @role='link']/span/span)[3]").text
 
     return [item]
 
 
 if __name__ == "__main__":
-  # r代表后面的字符串斜杠不转义，''表示python识别空格
-  # driverOptions.add_argument(r"user-data-dir=C:\Users\loeoe\AppData\Local\Google\Chrome\User''Data\Default\Login''Data")
-
   # 初始化webdriver
   driverOptions = webdriver.ChromeOptions()
 

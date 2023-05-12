@@ -13,7 +13,6 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
 
   def __init__(self, driver):
     self.driver = driver
-    self.user_name = None
 
   def get_twitter_user_name(self, page_url: str):
     """
@@ -64,38 +63,41 @@ class SpiderTwitterAccountPost(tool.abc.SingleSpider):
     while True:
       last_label_tweet = None
       for tweet in self.driver.find_elements(By.XPATH, "//article"):
-        item = {}
+        item = []
         tweet_id = tweet.find_element(By.XPATH, ".//div[@data-testid='User-Name']//a[@dir='ltr']")
         tweet_id = re.search("[0-9]+$", tweet_id.get_attribute("href")).group()
-        item["id"] = tweet_id
         # 判断推文是否已被抓取(若未被抓取则解析推文)
-        if item["id"] in tweet_id_set:
+        if tweet_id in tweet_id_set:
           continue
-        tweet_id_set.add(item["id"])
+        tweet_id_set.add(tweet_id)
         last_label_tweet = tweet
 
         # 解析推文发布时间
         datetime = tweet.find_element(By.XPATH, ".//time").get_attribute("datetime")
-        item["time"] = datetime.replace("T", " ").replace(".000Z", "")
+        datetime = datetime.replace("T", " ").replace(".000Z", "")
 
         # 解析推文内容
-        item["text"] = tweet.find_element(By.XPATH, ".//div[@data-testid='tweetText']").text
+        text = tweet.find_element(By.XPATH, ".//div[@data-testid='tweetText']").text
+
+        # 解析图片链接
+        for img in tweet.find_elements(By.XPATH, ".//img[@draggable='true' and string-length(@alt) > 0]")[1:]:
+          print(img.get_attribute("src"))
 
         # 定位到推文反馈数据标签
         label = tweet.find_element(By.XPATH, ".//div[@role='group']")
         analytics = label.get_attribute("aria-label")
         # 解析推文反馈数据
-        item["replies"], item["retweets"], item["likes"] = 0, 0, 0
+        replies, retweets, likes, views = 0, 0, 0, 0
         for feedback_item in analytics.split(","):
           if "replies" in feedback_item:
-            item["replies"] = int(re.search("[0-9]+", feedback_item).group())
+            replies = int(re.search("[0-9]+", feedback_item).group())
           if "Retweets" in feedback_item:
-            item["retweets"] = int(re.search("[0-9]+", feedback_item).group())
+            retweets = int(re.search("[0-9]+", feedback_item).group())
           if "likes" in feedback_item:
-            item["likes"] = int(re.search("[0-9]+", feedback_item).group())
-        if len(views := label.find_elements(By.XPATH, ".//span[@data-testid='app-text-transition-container']")) == 4:
-          item["views"] = views[3].text
-        print(item)
+            likes = int(re.search("[0-9]+", feedback_item).group())
+        if len(views_t := label.find_elements(By.XPATH, ".//span[@data-testid='app-text-transition-container']")) == 4:
+          views = views_t[3].text
+        item.extend([tweet_id, datetime, replies, retweets, likes, views, text])
         item_list.append(item)
 
       # 向下滚动到最下面的一条推文
