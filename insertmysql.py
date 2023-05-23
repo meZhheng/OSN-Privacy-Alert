@@ -5,10 +5,10 @@ class Mysql:
     def __init__(self):
         # 连接到 MySQL 数据库
         self.mydb = mysql.connector.connect(
-            host="150.158.140.253",  # 数据库主机地址
-            user="root",  # 用户名
-            password="qq523629002***",  # 密码
-            database="DATA")  # 数据库名称
+            host=config['database']['DB_HOST'],  # 数据库主机地址
+            user=config['database']['DB_USER'],  # 用户名
+            password=config['database']['DB_PASSWORD'],  # 密码
+            database=config['database']['DB_DATABASE'])  # 数据库名称
         # 创建游标对象
         self.my_cursor = self.mydb.cursor()
         if self.mydb:
