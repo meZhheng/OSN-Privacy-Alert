@@ -29,10 +29,12 @@ class Mysql:
         if len(users) == 10:
           self.my_cursor.executemany(sql, users)
           self.mydb.commit()
+          print(self.my_cursor.rowcount, "插入")
           users = []
       if users:
         self.my_cursor.executemany(sql, users)
         self.mydb.commit()
+        print(self.my_cursor.rowcount, "插入")
 
     elif table == 'tweets':
       sql = "INSERT IGNORE INTO tweets VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
@@ -47,9 +49,11 @@ class Mysql:
           self.my_cursor.executemany(sql, tweets)
           self.mydb.commit()
           tweets = []
+          print(self.my_cursor.rowcount, "插入")
       if tweets:
         self.my_cursor.executemany(sql, tweets)
         self.mydb.commit()
+        print(self.my_cursor.rowcount, "插入")
 
 
 if __name__ == "__main__":
