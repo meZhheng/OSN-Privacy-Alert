@@ -8,8 +8,9 @@ import os
 import re
 import json
 import tensorflow as tf
-import tokenization
+from NER import tokenization
 
+os.chdir(os.path.dirname(__file__))
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 vocab_file = "./vocab.txt"
