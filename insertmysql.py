@@ -1,4 +1,8 @@
 import mysql.connector
+import configparser
+
+config = configparser.ConfigParser()
+config.read('config.ini')
 
 
 class Mysql:
@@ -20,16 +24,32 @@ class Mysql:
         # SQL 插入语句
         sql = "INSERT INTO tweets (tweet_id, time, text, image, replies, retweets, likes, views) " \
               "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-        val = [["9999999999999999989", "2023.05.12", "插入测试", "图片url", 10, 9, 8, 7]]
         # 执行 SQL 插入语句
-        self.my_cursor.executemany(sql, val)
+        self.my_cursor.executemany(sql, item)
         # 提交到数据库执行
         self.mydb.commit()
         # 输出插入的行数
         print(self.my_cursor.rowcount, "record inserted.")
 
+    def blog_insert(self, item):
+        # SQL 插入语句
+        sql = "INSERT IGNORE INTO blogs VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        try:
+            # 执行 SQL 插入语句
+            self.my_cursor.executemany(sql, item)
+            # 提交到数据库执行
+            self.mydb.commit()
+        except Exception as e:
+            print(e)
+            self.mydb.rollback()
+        # 输出插入的行数
+        print(self.my_cursor.rowcount, "record inserted.")
+
+    def close(self):
+        self.mydb.close()
+
 
 if __name__ == "__main__":
     database = Mysql()
     item = {}
-    database.tweet_insert(item)
+    database.blog_insert(item)
