@@ -107,6 +107,7 @@ class Mysql:
         if emails:
             item = []
             for email in emails:
+                print(email)
                 row = [userid, '邮箱', email]
                 item.append(row)
             self.privacy_insert(item)

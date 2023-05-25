@@ -30,6 +30,8 @@ from util.dateutil import convert_to_days_ago
 from util.notify import push_deer
 
 from NER.predict_sequence_label import predict
+# 把程序路径切换回此文件
+os.chdir(os.path.dirname(__file__))
 
 warnings.filterwarnings("ignore")
 

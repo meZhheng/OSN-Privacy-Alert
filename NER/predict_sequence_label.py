@@ -171,9 +171,7 @@ def submit(path):
 
 
 if __name__ == "__main__":
-    text_ = "梅西作为阿根廷队的队长，刚刚赢得了世界杯冠军，比C罗的荣誉又多了一些。"
+    text_ = "请在这里输入你想要进行命名实体识别的语句"
     res_ = predict(text_)
     print(res_)
     print(type(res_))
-
-    #submit("CLUEdataset/ner/dev.json")
