@@ -148,12 +148,25 @@ class Mysql:
 
     def get_tweets(self, userid):
         """
-        从名为weibo的表中获取user_id为给定userid的所有行。
+        从博文表中获取user_id为给定userid的所有行。
 
         :param userid: 用户ID
-        :return: tweets，它是一个包含所有行的列表。
+        :return: tweets，它是一个包含用户所有博文的列表。
         """
         sql = "SELECT * FROM weibo WHERE user_id = %s"
+        val = [userid]
+        self.my_cursor.execute(sql, val)
+        tweets = self.my_cursor.fetchall()
+        return tweets
+
+    def get_valid_tweets(self, userid):
+        """
+        从博文表中中获取user_id为给定userid的存在命名实体的博文。
+
+        :param userid: 用户ID
+        :return: tweets，它是一个包含所有存在命名实体的博文的列表。
+        """
+        sql = "SELECT * FROM weibo WHERE user_id = %s AND isValid = 1"
         val = [userid]
         self.my_cursor.execute(sql, val)
         tweets = self.my_cursor.fetchall()
