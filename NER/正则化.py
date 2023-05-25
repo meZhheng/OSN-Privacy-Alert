@@ -25,6 +25,5 @@ def get_findAll_mobiles(text):
 if __name__ == '__main__':
     content = "Please 17965785598 42.121.252.58:443 contact 127.0.0.1  086-1598845173 us 068-1720071239 https://blog.csdn.net/u013421629/ at https://www.yiibai.com/ contact@qq.com for further information 1973536419@qq.com You can  also give feedbacl at FEedback@yiibai.com feng_hao_yang@sjtu.edu.cn"
     emails = get_findAll_emails(text=content)
-    print(emails)
     moblies = get_findAll_mobiles(text=content)
-    print(moblies)
+    print(type(moblies))
