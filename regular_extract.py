@@ -1,4 +1,4 @@
-from insertmysql import Mysql
+from Mysql import Mysql
 
 
 def regular_extract(userid):
