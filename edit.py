@@ -13,7 +13,7 @@ def getData(tweets):
     message = [
         {"role": "user", "content": instruction}]
 
-    openai.api_key = "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"
+    openai.api_key = ""
 
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
